@@ -28,7 +28,15 @@ export class Server {
         this.app.use(LoggerMiddleWare(this.dependencies.logger));
 
         this.app.use((req, res, next) => {
-            res.header('Access-Control-Allow-Origin', "*");
+
+            const allowedDomains = (process.env["ALLOWED_DOMAINS"] || "http://localhost:3000,https://amazon.com").split(",");
+
+            const origin = req.headers.origin as string;
+
+            if (allowedDomains.includes(origin)) {
+                res.header('Access-Control-Allow-Origin', origin);
+            }
+
             res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
             res.header('Access-Control-Allow-Headers', "Content-Type, Content-Length");
             res.header("Access-Control-Allow-Credentials", "true");
